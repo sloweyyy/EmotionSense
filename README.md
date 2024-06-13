@@ -15,3 +15,4 @@ EmotionSense is an application that predicts facial expressions of humans throug
    ```bash
     npx expo start
    ```
+   
