@@ -7,31 +7,49 @@ export default function Index() {
     const [image, setImage] = useState(null);
     const [label, setLabel] = useState(null);
 
-    const handlePrediction = async (image) => {
-        // Call your prediction function here
-        // const result = await predict(image);
-        setLabel("Fear");
-    }
+    const handlePrediction = async (image, withHOG) => {
+        if (withHOG) {
+            const response = await fetch('192.168.28.42:5000/predict_with_hog', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ imageUri: image, withHOG: withHOG }),
+            });
+            const data = await response.json();
+            setLabel(data.label);
+        }
+        else {
+            const response = await fetch('192.168.28.42:5000/predict_without_hog', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ imageUri: image, withHOG: withHOG }),
+            });
+            const data = await response.json();
+            setLabel(data.label);
+        }
+
+        
+    };
 
     const openCamera = async () => {
         const { status } = await ImagePicker.requestCameraPermissionsAsync();
         if (status === "granted") {
             const result = await ImagePicker.launchCameraAsync();
             if (!result.canceled) {
-                setImage(result.assets[0].uri); // Truy cập đến uri của ảnh được chọn
-                console.log(result.assets[0].uri);
+                setImage(result.assets[0].uri);
             }
         }
     };
 
     const openImagePicker = async () => {
-        const { status } =
-            await ImagePicker.requestMediaLibraryPermissionsAsync();
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status === "granted") {
             const result = await ImagePicker.launchImageLibraryAsync();
             if (!result.canceled) {
-                setImage(result.assets[0].uri); // Truy cập đến uri của ảnh được chọn
-                console.log(result.assets[0].uri);
+                setImage(result.assets[0].uri);
             }
         }
     };
@@ -51,17 +69,21 @@ export default function Index() {
                     onPress={openImagePicker}
                     title="Open Photo Gallery"
                 />
-                
             </Card>
             {image && (
                 <Card>
                     <Image source={{ uri: image }} style={styles.image} />
                     <Text style={styles.label}>{label}</Text>
                     <Button
-                    buttonStyle={styles.button}
-                    onPress={() => handlePrediction(image)}
-                    title="Predict"
-                />
+                        buttonStyle={styles.button}
+                        onPress={() => handlePrediction(image, true)}
+                        title="Predict with HOG"
+                    />
+                    <Button
+                        buttonStyle={styles.button}
+                        onPress={() => handlePrediction(image, false)}
+                        title="Predict without HOG"
+                    />
                 </Card>
             )}
         </View>
@@ -83,7 +105,6 @@ const styles = StyleSheet.create({
         width: 200,
         marginHorizontal: 50,
         marginVertical: 10,
-
     },
     image: {
         width: 300,
