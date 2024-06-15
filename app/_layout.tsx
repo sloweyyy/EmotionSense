@@ -11,7 +11,7 @@ export default function RootLayout() {
             <Stack>
                 <Stack.Screen
                     name="index"
-                    options={{ headerShown: true, title: "Home" }}
+                    options={{ headerShown: true, title: "EmotionSense" }}
                 />
             </Stack>
         </ThemeProvider>
