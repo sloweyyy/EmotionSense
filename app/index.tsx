@@ -115,6 +115,7 @@ export default function EmotionSense() {
                     buttonStyle={styles.button}
                 />
                 <View style={styles.pickerContainer}>
+                    <Text style={styles.resultText}>Select Model:</Text>
                     <Picker
                         selectedValue={selectedModel}
                         style={styles.picker}
